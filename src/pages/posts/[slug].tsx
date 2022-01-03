@@ -1,6 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import Prismic from '@prismicio/client';
 import { RichText } from 'prismic-dom';
 import { getPrismicClient } from '../../services/prismic';
 import SEO from '../../components/SEO';
@@ -21,6 +20,7 @@ export default function Post({ post }: PostProps) {
   if (router.isFallback) {
     return <p>Loading...</p>;
   }
+
   return (
     <>
       <SEO title="Post" />
@@ -38,6 +38,7 @@ export default function Post({ post }: PostProps) {
     </>
   );
 }
+
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths: [],
@@ -55,7 +56,7 @@ export const getStaticProps: GetStaticProps = async context => {
   const post = {
     slug,
     title: RichText.asText(response.data.title),
-    content: RichText.asText(response.data.content),
+    content: RichText.asHtml(response.data.content),
     updatedAt: new Date(response.last_publication_date).toLocaleDateString(
       'pt-BR',
       {
@@ -64,6 +65,7 @@ export const getStaticProps: GetStaticProps = async context => {
         year: 'numeric',
       },
     ),
+
   };
 
   return {
